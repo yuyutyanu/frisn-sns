@@ -97,7 +97,7 @@ body {
 .comment {
     position: absolute;
     right: 0px;
-    margin-top:9%;
+    margin-top:2%;
     margin-right: 2%;
 }
 .comment button {
@@ -148,4 +148,24 @@ body {
 .profile input {
     margin-top: 20%;
     margin-left: 10%;
+}
+
+.commentbox{
+  display:none;
+  position: absolute;
+  border: solid 8px;
+  border-bottom: solid 30px;
+  margin-left:30%;
+  margin-top:15%;
+  position: fixed;
+  z-index: 100;
+}
+.commentbox button{
+  position: absolute;
+}
+.comment-back{
+  height:100%;
+  width:100%;
+  background-color: rgba(255, 0, 0, 0);
+  display: none;
 }

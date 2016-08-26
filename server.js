@@ -45,19 +45,30 @@ client.connect(function(err) {
         });
     });
 
-io.on('connection', function(socket) {
-    // execute a query on our database
-    client.query('select * from history;', function(err, result) {
+    io.on('connection', function(socket) {
+        // execute a query on our database
+        client.query('select * from history;', function(err, result) {
             if (err) throw err;
             var dbdata = result.rows;
             io.on('connection', function(socket) {
-                    socket.emit('old-responsetext', dbdata);
-                });
+                socket.emit('old-responsetext', dbdata);
             });
-
-            // disconnect the client
-            //  client.end(function(err) {
-            //      if (err) throw err;
-            //  });
         });
+
+        // disconnect the client
+        //  client.end(function(err) {
+        //      if (err) throw err;
+        //  });
+    });
+});
+
+//comment
+io.on('connection', function(socket) {
+
+    socket.on('comment-req', function(data) {
+        var comment = data["comment"];
+        socket.emit('comment-res', {
+            comment: comment
+        });
+    });
 });

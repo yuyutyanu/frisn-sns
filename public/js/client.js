@@ -1,14 +1,16 @@
-var socket = io.connect('http://172.24.50.235:3000');
+//var socket = io.connect('http://172.24.50.23:3000');
+var socket = io.connect('http://192.168.1.7:3000');
+
 
 //pot text
-function submit(){
-  var text = $('#post-text').val();
-  $('#post-text').val("");
-  socket.emit('posttext', {
-    data: text
-  });
+function submit() {
+    var text = $('#post-text').val();
+    $('#post-text').val("");
+    socket.emit('posttext', {
+        data: text
+    });
 }
-$('#post-button').click(function () {
+$('#post-button').click(function() {
     var text = $('#post-text').val();
     $('#post-text').val("");
     socket.emit('posttext', {
@@ -31,14 +33,14 @@ socket.on('old-responsetext', function(data) {
             $('.buttonvalue' + i).append('<button type="button" name="button">comment</button>');
             $('.content' + i).append('<div class="wrap-box' + i + ' wrap-box-css"></div>');
             $('.wrap-box' + i).append('<img src="../nuko/001.jpg" alt="" class="profnuko"/>');
-            $('.wrap-box' + i).append('<p>'+ data[i]["url"] + '</p>');
+            $('.wrap-box' + i).append('<p>' + data[i]["url"] + '</p>');
             $('.content' + i).css('height', 'auto');
 
 
             // content　height size 可変長処理;
             var contentheight = $('.content' + i).height() / $(window).height() * 100;
-            if (contentheight <= 25) {
-                $('.content' + i).css('height', '25%');
+            if (contentheight <= 13) {
+                $('.content' + i).css('height', '13%');
             }
         }
     });
@@ -61,18 +63,41 @@ socket.on('new-responsetext', function(data) {
 
     // content　height size 可変長処理;
     var contentheight = $('.content' + newdata).height() / $(window).height() * 100;
-    if (contentheight <= 25) {
-        $('.content' + newdata).css('height', '25%');
+    if (contentheight <= 13) {
+        $('.content' + newdata).css('height', '13%');
     }
 });
 
+//comment 処理
+$(document).on("click", ".comment", function() {
+    //comment画面表示
+    $('.comment-back').fadeIn();
+    $('.commentbox').fadeIn();
+
+    //comment送信
+    $('#commentbox-button').click(function() {
+        var comment = $('#commentbox-text').val();
+        console.log(comment);
+        socket.emit('comment-req', {
+            comment: comment
+        });
+    });
+
+    //comment するコンテンツのclassを取得
+    var classname = this.className;
+    var this_buttonclass = classname.split(" ");
+    var parent = $('.' + this_buttonclass[1]).parent().attr('class');
+    var use_comment = parent.split(" ");
+    //取得したコンテンツcommentを追加
+    socket.on('comment-res', function(data) {
+        $('.' + use_comment[0]).after(data["comment"]);
+    });
+});
 
 //shortcat key
+$('#post-text').keydown(function(e) {
 
-
-$('#post-text').keydown(function (e) {
-
-  if (e.ctrlKey && e.keyCode == 13) {
-   submit();
-  }
+    if (e.ctrlKey && e.keyCode == 13) {
+        submit();
+    }
 });
