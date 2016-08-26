@@ -28,19 +28,19 @@ socket.on('old-responsetext', function(data) {
         }
         for (var i = 0; i < data.length; i++) {
             //database から　取得してつぶやき
-            $('.post-content').prepend('<div class="content' + i + ' ' + ' content-back"></div>');
-            $('.content' + i).append('<div class="comment buttonvalue' + i + '"></div>');
+            $('.post-content').prepend('<div id="content' + i + '"' + ' class="content-back"></div>');
+            $('#content' + i).append('<div class="comment buttonvalue' + i + '"></div>');
             $('.buttonvalue' + i).append('<button type="button" name="button">comment</button>');
-            $('.content' + i).append('<div class="wrap-box' + i + ' wrap-box-css"></div>');
+            $('#content' + i).append('<div class="wrap-box' + i + ' wrap-box-css"></div>');
             $('.wrap-box' + i).append('<img src="../nuko/001.jpg" alt="" class="profnuko"/>');
             $('.wrap-box' + i).append('<p>' + data[i]["url"] + '</p>');
-            $('.content' + i).css('height', 'auto');
+            $('#content' + i).css('height', 'auto');
 
 
             // content　height size 可変長処理;
-            var contentheight = $('.content' + i).height() / $(window).height() * 100;
+            var contentheight = $('#content' + i).height() / $(window).height() * 100;
             if (contentheight <= 13) {
-                $('.content' + i).css('height', '13%');
+                $('#content' + i).css('height', '13%');
             }
         }
     });
@@ -53,44 +53,46 @@ socket.on('new-responsetext', function(data) {
     var newdata = data.length - 1;
 
     //database から　取得してつぶやき
-    $('.post-content').prepend('<div class="content' + newdata + ' ' + ' content-back"></div>');
-    $('.content' + newdata).append('<div class="comment buttonvalue' + newdata + '"></div>');
+    $('.post-content').prepend('<div id="content' + newdata + '"' + ' class="content-back"></div>');
+    $('#content' + newdata).append('<div class="comment buttonvalue' + newdata + '"></div>');
     $('.buttonvalue' + newdata).append('<button type="button" name="button">comment</button>');
-    $('.content' + newdata).append('<div class="wrap-box' + newdata + ' wrap-box-css"></div>');
+    $('#content' + newdata).append('<div class="wrap-box' + newdata + ' wrap-box-css"></div>');
     $('.wrap-box' + newdata).append('<img src="../nuko/001.jpg" alt="" class="profnuko"/>');
     $('.wrap-box' + newdata).append('<p>' + data[newdata]["url"] + '</p>');
-    $('.content' + newdata).css('height', 'auto');
+    $('#content' + newdata).css('height', 'auto');
 
     // content　height size 可変長処理;
-    var contentheight = $('.content' + newdata).height() / $(window).height() * 100;
+    var contentheight = $('#content' + newdata).height() / $(window).height() * 100;
     if (contentheight <= 13) {
-        $('.content' + newdata).css('height', '13%');
+        $('#content' + newdata).css('height', '13%');
     }
 });
-
+var comment;
 //comment 処理
 $(document).on("click", ".comment", function() {
     //comment画面表示
-    $('.comment-back').fadeIn();
     $('.commentbox').fadeIn();
 
     //comment送信
     $('#commentbox-button').click(function() {
-        var comment = $('#commentbox-text').val();
+        comment = $('#commentbox-text').val();
         console.log(comment);
         socket.emit('comment-req', {
             comment: comment
         });
+        $('.commentbox').fadeOut();
     });
 
     //comment するコンテンツのclassを取得
     var classname = this.className;
     var this_buttonclass = classname.split(" ");
-    var parent = $('.' + this_buttonclass[1]).parent().attr('class');
-    var use_comment = parent.split(" ");
-    //取得したコンテンツcommentを追加
+    var comment_content = $('.' + this_buttonclass[1]).parent().attr('id');
+    console.log(comment_content);
+
+    //commentを画面に表示
     socket.on('comment-res', function(data) {
-        $('.' + use_comment[0]).after(data["comment"]);
+        //  console.log(data);
+        $('#' + comment_content).after('<p class="comment-design">' + data["comment"] + '</p>');
     });
 });
 

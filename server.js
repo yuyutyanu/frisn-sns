@@ -64,9 +64,9 @@ client.connect(function(err) {
 
 //comment
 io.on('connection', function(socket) {
-
     socket.on('comment-req', function(data) {
         var comment = data["comment"];
+        console.log(comment);
         socket.emit('comment-res', {
             comment: comment
         });
