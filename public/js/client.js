@@ -1,6 +1,7 @@
 //var socket = io.connect('http://172.24.50.23:3000');
-var socket = io.connect('http://192.168.1.7:3000');
-
+//var socket = io.connect('http://192.168.1.7:3000');
+var socket = io.connect('http://192.168.211.104:3000');
+//var socket = io.connect('http://localhost:3000');
 
 //pot text
 function submit() {
@@ -67,35 +68,37 @@ socket.on('new-responsetext', function(data) {
         $('#content' + newdata).css('height', '13%');
     }
 });
+
 var comment;
 //comment 処理
+
+//comment送信
+$('#commentbox-button').click(function() {
+    comment = $('#commentbox-text').val();
+    $('#commentbox-text').val();
+    console.log(comment);
+    socket.emit('comment-req', {
+        comment: comment,id :comment_content
+    });
+    $('.commentbox').fadeOut();
+});
+var comment_content;
 $(document).on("click", ".comment", function() {
     //comment画面表示
     $('.commentbox').fadeIn();
 
-    //comment送信
-    $('#commentbox-button').click(function() {
-        comment = $('#commentbox-text').val();
-        console.log(comment);
-        socket.emit('comment-req', {
-            comment: comment
-        });
-        $('.commentbox').fadeOut();
-    });
-
     //comment するコンテンツのclassを取得
     var classname = this.className;
     var this_buttonclass = classname.split(" ");
-    var comment_content = $('.' + this_buttonclass[1]).parent().attr('id');
+    comment_content = $('.' + this_buttonclass[1]).parent().attr('id');
     console.log(comment_content);
 
     //commentを画面に表示
-    socket.on('comment-res', function(data) {
-        //  console.log(data);
-        $('#' + comment_content).after('<p class="comment-design">' + data["comment"] + '</p>');
-    });
 });
-
+socket.on('comment-res', function(data) {
+      console.log(data);
+    $('#' + data["id"]).after('<p class="comment-design">' + data["comment"] + '</p>');
+});
 //shortcat key
 $('#post-text').keydown(function(e) {
 

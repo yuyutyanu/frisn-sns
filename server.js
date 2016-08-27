@@ -66,9 +66,12 @@ client.connect(function(err) {
 io.on('connection', function(socket) {
     socket.on('comment-req', function(data) {
         var comment = data["comment"];
+        var id = data["id"];
+        console.log(id);
         console.log(comment);
-        socket.emit('comment-res', {
-            comment: comment
+        io.sockets.emit('comment-res', {
+            comment: comment,
+            id: id
         });
     });
 });
